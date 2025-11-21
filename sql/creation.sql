@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS iot_devices;
+USE iot_devices;
+
+CREATE TABLE dispositivos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    serial VARCHAR(100) NOT NULL UNIQUE,
+    nombre VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    ubicacion VARCHAR(150) NOT NULL,
+    estado TINYINT NOT NULL DEFAULT 1
+);

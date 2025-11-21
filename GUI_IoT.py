@@ -80,7 +80,7 @@ class App(ctk.CTk):
 
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(base_dir, "ImagenesProyecto", "logo.png") 
+        image_path = os.path.join(base_dir, "ImagenesProyecto", "logo.png")
         self.logo_image = ctk.CTkImage(Image.open(image_path), size=(300, 300))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="")
         self.logo_label.grid(row=0, column=0, padx=10, pady=20, sticky="nw")
