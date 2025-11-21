@@ -1,4 +1,4 @@
-# Energo  
+# Energo  ⚡
 ### Sistema IoT para Monitoreo de Consumo Eléctrico en Tiempo Real
 
 ---
@@ -125,11 +125,11 @@ El botón "Abrir Grafana" abre el dashboard configurado.
 
 ## Autores
 
-Gabriel Nuñez Morales
-Viviana Alfaro Brenes
-Greivin Carrillo Rodríguez
-José Loría Cordero
-Julio Varela Venegas
+Gabriel Nuñez Morales-
+Viviana Alfaro Brenes-
+Greivin Carrillo Rodríguez-
+José Loría Cordero-
+Julio Varela Venegas.
 
 Estudiantes de Ingeniería en Computadores  
 Instituto Tecnológico de Costa Rica
