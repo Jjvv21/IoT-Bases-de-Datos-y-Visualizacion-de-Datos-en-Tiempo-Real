@@ -3,6 +3,7 @@ import urequests
 import time
 import json
 import random
+import sys
 
 # ============================
 # CONFIGURACIÓN DEL DISPOSITIVO
@@ -40,6 +41,8 @@ def leer_corriente_simulada():
 
 
 # --- Sensores reales (cuando los tengas) --- #
+
+'''
 def leer_voltaje_real():
     # Aquí irá el código del ZMPT101B o ADC
     # Ejemplo:
@@ -47,13 +50,22 @@ def leer_voltaje_real():
     # volt = convertir_a_voltaje(val)
     # return volt
     return leer_voltaje_simulado()  # por ahora simulado
+'''
 
+def leer_voltaje_real():
+    # Ejemplo futuro:
+    # adc = machine.ADC(0)
+    # raw = adc.read()
+    # volt = calibrar(raw)
+    return leer_voltaje_simulado()
 
+'''
 def leer_corriente_real():
     # Aquí irá la lectura del SCT-013
     # Ejemplo:
     # corriente = calcular_corriente(transformer.read())
     return leer_corriente_simulada()  # por ahora simulado
+'''
 
 
 # Función principal de lectura:
@@ -131,7 +143,9 @@ def enviar_datos():
         except Exception as e:
             print("Error enviando datos:", e)
 
+        sys.print_exception(None)
         time.sleep(5)
+
 
 
 # ============================
