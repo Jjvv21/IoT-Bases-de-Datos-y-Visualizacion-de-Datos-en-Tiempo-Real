@@ -14,10 +14,10 @@ NOMBRE = "Medidor 1"
 TIPO = "Energia"
 UBICACION = "Laboratorio A"
 
-API_URL = "http://TU_IP_O_DOMINIO:5000"   # <---- Cambiar cuando tengas la API corriendo
+API_URL = "http://192.168.100.41:5000"   
 
-WIFI_SSID = "nombreRed"
-WIFI_PASSWORD = "contrasena"
+WIFI_SSID = "redname"
+WIFI_PASSWORD = "password"
 
 
 usar_sensores_reales = False
@@ -27,20 +27,10 @@ usar_sensores_reales = False
 # FUNCIONES DE SENSORES
 # ============================
 
-# --- Simulación de sensores --- #
-def leer_voltaje_simulado():
-    base = 120  # voltaje típico
-    ruido = random.uniform(-5, 5)
-    return round(base + ruido, 2)
 
 
-def leer_corriente_simulada():
-    base = 0.45  # amperaje típico
-    ruido = random.uniform(-0.15, 0.15)
-    return round(base + ruido, 2)
 
-
-# --- Sensores reales (cuando los tengas) --- #
+# --- Sensores reales --- #
 
 '''
 def leer_voltaje_real():
@@ -50,7 +40,7 @@ def leer_voltaje_real():
     # volt = convertir_a_voltaje(val)
     # return volt
     return leer_voltaje_simulado()  # por ahora simulado
-'''
+
 
 def leer_voltaje_real():
     # Ejemplo futuro:
@@ -59,7 +49,7 @@ def leer_voltaje_real():
     # volt = calibrar(raw)
     return leer_voltaje_simulado()
 
-'''
+
 def leer_corriente_real():
     # Aquí irá la lectura del SCT-013
     # Ejemplo:
@@ -67,7 +57,7 @@ def leer_corriente_real():
     return leer_corriente_simulada()  # por ahora simulado
 '''
 
-
+'''
 # Función principal de lectura:
 def obtener_mediciones():
     if usar_sensores_reales:
@@ -80,7 +70,7 @@ def obtener_mediciones():
     potencia = round(voltaje * corriente, 2)
 
     return voltaje, corriente, potencia
-
+'''
 # ============================
 # 1. CONECTARSE AL WIFI
 # ============================
@@ -124,7 +114,7 @@ def registrar_dispositivo():
 # ============================
 # 3. ENVIAR DATOS SIMULADOS
 # ============================
-
+'''
 def enviar_datos():
     url = API_URL + "/send-data"
 
@@ -146,7 +136,7 @@ def enviar_datos():
         sys.print_exception(None)
         time.sleep(5)
 
-
+'''
 
 # ============================
 # PROGRAMA PRINCIPAL
@@ -154,4 +144,4 @@ def enviar_datos():
 
 conectar_wifi()
 registrar_dispositivo()
-enviar_datos()
+#enviar_datos()

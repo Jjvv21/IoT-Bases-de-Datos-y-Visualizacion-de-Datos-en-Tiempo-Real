@@ -14,7 +14,7 @@ def get_mysql():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="root",
+        password="password",
         database="iot_devices"
     )
 

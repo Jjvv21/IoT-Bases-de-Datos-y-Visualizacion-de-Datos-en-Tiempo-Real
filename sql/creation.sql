@@ -9,3 +9,6 @@ CREATE TABLE dispositivos (
     ubicacion VARCHAR(150) NOT NULL,
     estado TINYINT NOT NULL DEFAULT 1
 );
+
+SELECT * FROM dispositivos
+
