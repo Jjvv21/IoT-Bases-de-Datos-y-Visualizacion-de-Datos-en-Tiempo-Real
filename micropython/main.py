@@ -1,0 +1,147 @@
+import network
+import urequests
+import time
+import json
+import random
+import sys
+
+# ============================
+# CONFIGURACIÓN DEL DISPOSITIVO
+# ============================
+
+SERIAL = "ESP8266-LAB-01"
+NOMBRE = "Medidor 1"
+TIPO = "Energia"
+UBICACION = "Laboratorio A"
+
+API_URL = "http://192.168.100.41:5000"   
+
+WIFI_SSID = "redname"
+WIFI_PASSWORD = "password"
+
+
+usar_sensores_reales = False
+
+
+# ============================
+# FUNCIONES DE SENSORES
+# ============================
+
+
+
+
+# --- Sensores reales --- #
+
+'''
+def leer_voltaje_real():
+    # Aquí irá el código del ZMPT101B o ADC
+    # Ejemplo:
+    # val = adc.read()
+    # volt = convertir_a_voltaje(val)
+    # return volt
+    return leer_voltaje_simulado()  # por ahora simulado
+
+
+def leer_voltaje_real():
+    # Ejemplo futuro:
+    # adc = machine.ADC(0)
+    # raw = adc.read()
+    # volt = calibrar(raw)
+    return leer_voltaje_simulado()
+
+
+def leer_corriente_real():
+    # Aquí irá la lectura del SCT-013
+    # Ejemplo:
+    # corriente = calcular_corriente(transformer.read())
+    return leer_corriente_simulada()  # por ahora simulado
+'''
+
+'''
+# Función principal de lectura:
+def obtener_mediciones():
+    if usar_sensores_reales:
+        voltaje = leer_voltaje_real()
+        corriente = leer_corriente_real()
+    else:
+        voltaje = leer_voltaje_simulado()
+        corriente = leer_corriente_simulada()
+
+    potencia = round(voltaje * corriente, 2)
+
+    return voltaje, corriente, potencia
+'''
+# ============================
+# 1. CONECTARSE AL WIFI
+# ============================
+
+def conectar_wifi():
+    wifi = network.WLAN(network.STA_IF)
+    wifi.active(True)
+
+    if not wifi.isconnected():
+        print("Conectando al WiFi...")
+        wifi.connect(WIFI_SSID, WIFI_PASSWORD)
+
+        while not wifi.isconnected():
+            time.sleep(0.5)
+
+    print("WiFi conectado:", wifi.ifconfig())
+
+
+# ============================
+# 2. REGISTRAR DISPOSITIVO EN PYTHON
+# ============================
+
+def registrar_dispositivo():
+    url = API_URL + "/register-device"
+
+    payload = {
+        "serial": SERIAL,
+        "nombre": NOMBRE,
+        "tipo": TIPO,
+        "ubicacion": UBICACION
+    }
+
+    try:
+        r = urequests.post(url, json=payload)
+        print("Respuesta registro:", r.text)
+        r.close()
+    except Exception as e:
+        print("Error registrando:", e)
+
+
+# ============================
+# 3. ENVIAR DATOS SIMULADOS
+# ============================
+'''
+def enviar_datos():
+    url = API_URL + "/send-data"
+
+    while True:
+        payload = {
+            "serial": SERIAL,
+            "voltaje": 115 + 5,  # puedes cambiar esto luego
+            "corriente": 0.4,
+            "potencia": 52.3
+        }
+
+        try:
+            r = urequests.post(url, json=payload)
+            print("Lectura enviada:", r.text)
+            r.close()
+        except Exception as e:
+            print("Error enviando datos:", e)
+
+        sys.print_exception(None)
+        time.sleep(5)
+
+'''
+
+# ============================
+# PROGRAMA PRINCIPAL
+# ============================
+
+conectar_wifi()
+registrar_dispositivo()
+#enviar_datos()

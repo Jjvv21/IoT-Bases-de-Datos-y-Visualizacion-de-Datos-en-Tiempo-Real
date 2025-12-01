@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import os 
+
 from PIL import Image, ImageTk
+
 from pymongo import MongoClient
 from datetime import datetime
 import webbrowser
@@ -24,6 +26,7 @@ class devices(ctk.CTkFrame):
 class log(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+
 
         # Título vacío
         title = ctk.CTkLabel(self, text="")
@@ -52,13 +55,16 @@ class log(ctk.CTkFrame):
 
         # Cuadro donde se mostrarán los logs
         self.log_box = ctk.CTkTextbox(self, height=250, font=("Consolas", 15))
+
         self.log_box.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
+
 
 
 
 class graphs(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+
 
         # Configuración del grid principal
         self.grid_rowconfigure(0, weight=1)
@@ -162,7 +168,9 @@ class App(ctk.CTk):
 
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
+
         image_path = os.path.join(base_dir, "ImagenesProyecto", "logo.png") 
+
         self.logo_image = ctk.CTkImage(Image.open(image_path), size=(300, 300))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="")
         self.logo_label.grid(row=0, column=0, padx=10, pady=20, sticky="nw")
@@ -182,7 +190,9 @@ class App(ctk.CTk):
         
     def mostrar_lecturas(self):
         # Leer últimas 5 lecturas
+
         lecturas = list(self.mongo_collection.find().sort("timestamp", -1).limit(9))
+
 
         # Limpiar texto del log
         self.log_panel.log_box.delete("1.0", "end")
@@ -193,8 +203,10 @@ class App(ctk.CTk):
             self.log_panel.log_box.insert("end", linea)
 
 
+
         # Actualizar automáticamente cada 2 segundos
         self.after(1500, self.mostrar_lecturas)
+
 
 
 if __name__ == "__main__":
