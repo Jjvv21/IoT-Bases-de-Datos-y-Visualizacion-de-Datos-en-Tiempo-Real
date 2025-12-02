@@ -15,7 +15,7 @@ def get_mysql():
         host="localhost",
         user="root",
 
-        password="password",
+        password="1751652",
 
         database="iot_devices"
     )
@@ -65,27 +65,53 @@ def register_device():
 # 3. ENDPOINT PARA RECIBIR LECTURAS
 # ==========================================
 
+# Variables globales para combinar lecturas
+ultimo_voltaje = None
+ultima_corriente = None
+
 @app.route("/send-data", methods=["POST"])
-def send_data():
+def recibir_datos():
+    global ultimo_voltaje, ultima_corriente
+
     data = request.get_json()
 
     serial = data.get("serial")
+    voltaje = data.get("voltaje")
+    corriente = data.get("corriente")
 
-    # Verificación en MySQL
-    db = get_mysql()
-    cursor = db.cursor(dictionary=True)
+    timestamp = datetime.now()
 
-    cursor.execute("SELECT * FROM dispositivos WHERE serial = %s", (serial,))
-    existe = cursor.fetchone()
+    # Guardamos lecturas por separado
+    if voltaje is not None:
+        ultimo_voltaje = voltaje
 
-    if not existe:
-        return jsonify({"error": "Dispositivo no registrado"}), 400
+    if corriente is not None:
+        ultima_corriente = corriente
 
-    # Insertar lectura en MongoDB
-    data["timestamp"] = datetime.utcnow()
-    lecturas.insert_one(data)
+    # Cálculo de potencia real (solo si ambos existen)
+    potencia = None
+    if ultimo_voltaje is not None and ultima_corriente is not None:
+        potencia = round(ultimo_voltaje * ultima_corriente, 3)
 
-    return jsonify({"msg": "Lectura recibida", "serial": serial})
+    # Guardar en MongoDB
+    lecturas.insert_one({
+        "serial": serial,
+        "voltaje": voltaje,
+        "corriente": corriente,
+        "potencia": potencia,
+        "timestamp": timestamp
+    })
+
+    print("Lectura guardada:", data, "Potencia:", potencia)
+
+    return jsonify({
+        "msg": "OK",
+        "serial": serial,
+        "voltaje": voltaje,
+        "corriente": corriente,
+        "potencia": potencia,
+        "timestamp": str(timestamp)
+    })
 
 
 # ==========================================

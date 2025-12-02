@@ -4,6 +4,10 @@ import time
 import json
 import random
 import sys
+import machine
+import math
+import urandom
+
 
 # ============================
 # CONFIGURACIÓN DEL DISPOSITIVO
@@ -14,63 +18,63 @@ NOMBRE = "Medidor 1"
 TIPO = "Energia"
 UBICACION = "Laboratorio A"
 
-API_URL = "http://192.168.100.41:5000"   
+API_URL = "http://192.168.1.104:5000"
 
-WIFI_SSID = "redname"
-WIFI_PASSWORD = "password"
+WIFI_SSID = "Claro - 2.4"
+WIFI_PASSWORD = "Apartamento10"
 
 
-usar_sensores_reales = False
+usar_sensores_reales = True
 
 
 # ============================
-# FUNCIONES DE SENSORES
+# ZMPT101B - VOLTAJE REAL
+# ============================
+
+adc = machine.ADC(0)
+FACTOR_V = 0.21  # punto de partida, lo podemos ajustar
+
+def leer_voltaje_real(samples=300):
+    sq_sum = 0
+    for _ in range(samples):
+        val = adc.read()
+        sq_sum += val * val
+        time.sleep_us(200)
+
+    mean = sq_sum / samples
+    rms_adc = math.sqrt(mean)
+    volt = rms_adc * FACTOR_V
+    return round(volt, 2)
+
+
+def ruido():
+    # genera un número entre -1.0 y 1.0
+    return (urandom.getrandbits(10) / 512) - 1
+
+# ============================
+# CORRIENTE (POR AHORA SIMULADA)
 # ============================
 
 
 
-
-# --- Sensores reales --- #
-
-'''
-def leer_voltaje_real():
-    # Aquí irá el código del ZMPT101B o ADC
-    # Ejemplo:
-    # val = adc.read()
-    # volt = convertir_a_voltaje(val)
-    # return volt
-    return leer_voltaje_simulado()  # por ahora simulado
+def leer_corriente_simulada():
+    base = 0.4
+    ruido = ((urandom.getrandbits(10) / 512) - 1) * 0.1
+    return round(base + ruido, 2)
 
 
-def leer_voltaje_real():
-    # Ejemplo futuro:
-    # adc = machine.ADC(0)
-    # raw = adc.read()
-    # volt = calibrar(raw)
-    return leer_voltaje_simulado()
 
-
-def leer_corriente_real():
-    # Aquí irá la lectura del SCT-013
-    # Ejemplo:
-    # corriente = calcular_corriente(transformer.read())
-    return leer_corriente_simulada()  # por ahora simulado
-'''
-
-'''
-# Función principal de lectura:
 def obtener_mediciones():
     if usar_sensores_reales:
         voltaje = leer_voltaje_real()
-        corriente = leer_corriente_real()
     else:
-        voltaje = leer_voltaje_simulado()
-        corriente = leer_corriente_simulada()
+        voltaje = 120
 
+    corriente = leer_corriente_simulada()    # luego la cambiamos por el SCT real
     potencia = round(voltaje * corriente, 2)
 
     return voltaje, corriente, potencia
-'''
+
 # ============================
 # 1. CONECTARSE AL WIFI
 # ============================
@@ -111,37 +115,37 @@ def registrar_dispositivo():
         print("Error registrando:", e)
 
 
-# ============================
-# 3. ENVIAR DATOS SIMULADOS
-# ============================
-'''
+
+
 def enviar_datos():
     url = API_URL + "/send-data"
 
     while True:
+        voltaje, corriente, potencia = obtener_mediciones()
+
         payload = {
             "serial": SERIAL,
-            "voltaje": 115 + 5,  # puedes cambiar esto luego
-            "corriente": 0.4,
-            "potencia": 52.3
+            "voltaje": voltaje,
+            "corriente": corriente,
+            "potencia": potencia
         }
 
         try:
             r = urequests.post(url, json=payload)
-            print("Lectura enviada:", r.text)
+            print("Lectura enviada:", payload)
             r.close()
         except Exception as e:
             print("Error enviando datos:", e)
+            conectar_wifi()
 
-        sys.print_exception(None)
         time.sleep(5)
 
-'''
 
 # ============================
-# PROGRAMA PRINCIPAL
+# MAIN
 # ============================
 
 conectar_wifi()
 registrar_dispositivo()
-#enviar_datos()
+enviar_datos()
+
